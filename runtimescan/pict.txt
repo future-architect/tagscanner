@@ -1,0 +1,12 @@
+src-type: string, int, float, bool
+dest-type: string, int, float, bool
+convert: ok, ng
+
+if [src-type] = [dest-type]
+    then [convert] = "ok";
+if [src-type] = "int" AND [dest-type] = "float"
+    then [convert] = "ok";
+if [src-type] = "float" AND [dest-type] = "int"
+    then [convert] = "ok";
+if [src-type] = "bool" OR [dest-type] = "bool"
+    then [convert] = "ok";
