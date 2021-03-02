@@ -1,14 +1,16 @@
 # tagscanner
 
+[![Go Reference](https://pkg.go.dev/badge/gitlab.com/osaki-lab/tagscanner.svg)](https://pkg.go.dev/gitlab.com/osaki-lab/tagscanner)
+
 このパッケージは構造体のタグを使って外部データとのやりとりをするライブラリを作成するためのヘルパーライブラリです。
 
 リフレクションやGoのコード解析、型のマッピングの処理をカプセル化します。
 
 主に3つの機能があります。
 
-* 構造体のデータを外部に書き出す(``runtimescan/Encode()`)
-* 外部のデータを構造体の書き込む(``runtimescan/Decode()`)
-* 構造体を元にコード生成を行う(``staticscan/Scan()`)
+* 構造体のデータを外部に書き出す(``runtimescan/Encode()``)
+* 外部のデータを構造体の書き込む(``runtimescan/Decode()``)
+* 構造体を元にコード生成を行う(``staticscan/Scan()``)
 
 ``runtimescan``パッケージは、実行時に動的に構造体をパースして処理します。
 ``staticscan``パッケージは、静的解析・コードジェネレータ用です。
@@ -23,13 +25,11 @@
 エンコード、デコードの両方で、まずは構造体のフィールドを解析し、上記のインタフェースの``ParseTag()``を呼び出します。
 この中でタグの値を分析したりします。このメソッドの返り値は次の処理で利用されます。
 
-デコード処理では``ExtractValue()``が、エンコード処理では``VisitField()``が呼ばれます。
+デコード処理では``ExtractValue()``が呼ばれます。呼ばれるときには``ParseTag()``の返したタグの分析情報のインスタンスが引数として渡されます。
+このメソッドが返した値が、構造体にセットされます。
 
-デコードでは``ParseTag()``の返したインスタンスが引数となって帰ってきます。この関数の返り値が構造体にセットされます。
-
-エンコードでは``ExtraceValue()``には``ParseTag()``の返したインスタンスと値が渡ってきます。
-
-前者は
+エンコード処理では``VisitField()``が呼ばれます。こちらも呼ばれるときには``ParseTag()``の返したタグの分析情報のインスタンスが引数として渡されます。
+それ以外にフィールドの値も引数として渡されます。
 
 ### 基本の使い方
 
@@ -117,9 +117,27 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
 #### 構造体を元にコード生成を行う(``staticscan/Scan()``)
 
+こちらはソースコードの構造体を静的解析します。
+
 #### 実装のヘルパー
 
+いくつか便利関数を提供しています。
 
+* ``runtimescan.BasicParseTag(name, tagStr, pathStr string, elemType reflect.Type)``
+
+  ``ParseTag()``で``encoding/json``のように出力先のキー名（省略時はフィールド名を小文字にしたもの）
+
+* ``runtimescan.Str2PrimitiveValue(v str)``
+
+  1やtrueなどの文字列表現からプリミティブを作成します。タグ中に文字列で書かれたプリミティブをデフォルト値などで使う場合に利用します。
+
+* ``runtimescan.IsPointerOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i interface{})``
+
+  ``interface{}``に渡されたポインタ型が``*struct``か``*[]struct``か``*[]*struct``かをそれぞれ判定します。
+
+* ``runtimescan.NewStructInstance(i interface{})``
+
+  引数で渡されたポインタ型を元に、インスタンスを生成して返します。引数は``*struct``か``*[]struct``か``*[]*struct``のいずれかを受け付け、``*struct``を返します。
 
 ### 応用例
 
@@ -130,7 +148,7 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
 #### 構造体のコピー
 
-
+``runtimescan/Encode()``をソースのインスタンスに対して呼び出し、``map``に一時的に値を入れてからそれを元に``runtimescan/Decode()``を呼び出すことで、構造体間でフィールドのコピーが行えます。
 
 ## ライセンス
 
