@@ -9,6 +9,8 @@ import (
 )
 
 // BasicTag is for convenience.
+//
+// BasicParseTag() creates this instance.
 type BasicTag struct {
 	Name     string
 	Tag      string
@@ -18,7 +20,8 @@ type BasicTag struct {
 
 // BasicParseTag is a helper function to make tagscanner easy.
 //
-// Both Encoder and Decoder should implement
+// Both Encoder and Decoder should implement ParseTag() method.
+// This is the simplest implementation of these methods.
 func BasicParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
 	if tagStr == "" {
 		tagStr = strings.ToLower(name)
@@ -31,6 +34,7 @@ func BasicParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag int
 	}, nil
 }
 
+// Str2PrimitiveValue generates primitive from string like "1", "true". It is for creating primitive from string in tag.
 func Str2PrimitiveValue(value string, elemType reflect.Type) (interface{}, error) {
 	switch elemType.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
@@ -64,6 +68,7 @@ func Str2PrimitiveValue(value string, elemType reflect.Type) (interface{}, error
 	}
 }
 
+// IsPointerOfSliceOfStruct checks passed interface{} is the form of *[]struct.
 func IsPointerOfSliceOfStruct(i interface{}) bool {
 	v := reflect.ValueOf(i)
 	if v.Type().Kind() != reflect.Ptr {
@@ -75,6 +80,7 @@ func IsPointerOfSliceOfStruct(i interface{}) bool {
 	return v.Type().Elem().Elem().Kind() == reflect.Struct
 }
 
+// IsPointerOfSliceOfPointerOfStruct checks passed interface{} is the form of *[]*struct.
 func IsPointerOfSliceOfPointerOfStruct(i interface{}) bool {
 	v := reflect.ValueOf(i)
 	if v.Type().Kind() != reflect.Ptr {
@@ -89,6 +95,7 @@ func IsPointerOfSliceOfPointerOfStruct(i interface{}) bool {
 	return v.Type().Elem().Elem().Elem().Kind() == reflect.Struct
 }
 
+// IsPointerOfStruct checks passed interface{} is the form of *struct.
 func IsPointerOfStruct(i interface{}) bool {
 	v := reflect.ValueOf(i)
 	if v.Type().Kind() != reflect.Ptr {
@@ -97,6 +104,10 @@ func IsPointerOfStruct(i interface{}) bool {
 	return v.Type().Elem().Kind() == reflect.Struct
 }
 
+// NewStructInstance returns new instance based on passed input.
+//
+// Even if the input has a form of *struct, *[]struct, *[]*struct,
+// it creates new instance and returns in the form of *struct.
 func NewStructInstance(i interface{}) (interface{}, error) {
 	if IsPointerOfStruct(i) {
 		v := reflect.New(reflect.TypeOf(i).Elem())
