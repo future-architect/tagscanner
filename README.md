@@ -8,9 +8,9 @@ It conceals complex reflection, Go's code analysis, type mapping codes from your
 
 It contains three features:
 
-* Extract values from struct (``runtimescan/Encode()``)
-* Inject values to struct (``runtimescan/Decode()``)
-* Generate code from struct code (``staticscan/Scan()``)
+* Extract values from struct (``runtimescan.Encode()``)
+* Inject values to struct (``runtimescan.Decode()``)
+* Generate code from struct code (``staticscan.Scan()``)
 
 ``runtimescan`` package dynamically analyses struct instances and works. 
 ``staticscan`` package works for static analysis and code generation.
@@ -35,13 +35,13 @@ In addition to this, ``VisitField()`` will be received the value that is extract
 
 ### Basic Usages
 
-#### Write data to other container(``runtimescan/Encode()``)
+#### Write data from struct's instance to other container(``runtimescan.Encode()``)
 
-First, create a structure that satisfies the `` Encoder`` interface. Set the output destination to the field of the structure.
+First, create a structure that satisfies the ``runtimescan.Encoder`` interface. Set the output destination to the field of the structure.
 
-There are also a helper functions.  `` runtimescan.BasicParseTag () `` is a one of them. if you want to put only the field name in the tag, like the basics of `` encoding / json``.
+There are some helper functions.  ``runtimescan.BasicParseTag()`` is a one of them. if you want to put only the field name in the tag, like ``encoding/json``.
 
-Implementation is completed by setting the value passed to `` VisitField () `` as the output destination.
+Then implement ``VisitField()`` that receives field value and stores to destination object (in this case, ``dest``).
 
 ```go
 type encoder struct {
@@ -67,7 +67,7 @@ func (m encoder) LeaveChild(tag interface{}) (err error) {
 }
 ```
 
-最後に、ユーザー向けのAPIの関数を作ります。
+At last, create an entry point function.
 
 ```go
 func Encode(dest map[string]interface{}, src interface{}) error {
@@ -78,12 +78,11 @@ func Encode(dest map[string]interface{}, src interface{}) error {
 }
 ```
 
-#### 外部のデータを構造体の書き込む(``runtimescan/Decode()``)
+#### Write data to struct(``runtimescan/Decode()``)
 
-まずは``Decoder``インタフェースを満たす構造体を作ります。入力元を構造体のフィールドに設定しておきます。
+First, create a structure that satisfies the ``runtimescan.Decoder`` interface.
 
-この``ExtractValue()``の返り値が最終的に構造体に書き込まれます。構造体に設定した入力用データから、タグの情報を元に取り出してきて返り値として返すことで、
-あとはライブラリがフィールドに値を設定します。
+Implement ``ExtractValue()`` method. The result value of this method will be passed to target struct.
 
 ```go
 type decoder struct {
@@ -104,7 +103,7 @@ func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
 }
 ```
 
-こちらも、最後にユーザー向けのAPIの関数を定義します。
+At last, create an entry point function.
 
 ```go
 func Decode(dest interface{}, src map[string]interface{}) error {
@@ -117,40 +116,41 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
 ```
 
-#### 構造体を元にコード生成を行う(``staticscan/Scan()``)
+#### Generation code from structs' tag fields(``staticscan.Scan()``)
 
-こちらはソースコードの構造体を静的解析します。
+This package provides functions to analyze and generate codes(``staticscan.Scan()`)
 
-#### 実装のヘルパー
+#### Utility functions
 
-いくつか便利関数を提供しています。
+This package contains several utility functions.
 
 * ``runtimescan.BasicParseTag(name, tagStr, pathStr string, elemType reflect.Type)``
 
-  ``ParseTag()``で``encoding/json``のように出力先のキー名（省略時はフィールド名を小文字にしたもの）
+  This is the simplest implementation of ``ParseTag()``. It returns tag value or lower field name if the field doesn't have tag.
 
 * ``runtimescan.Str2PrimitiveValue(v str)``
 
-  1やtrueなどの文字列表現からプリミティブを作成します。タグ中に文字列で書かれたプリミティブをデフォルト値などで使う場合に利用します。
+  It generates primitive from string like "1", "true". It is for creating primitive from string in tag.
 
 * ``runtimescan.IsPointerOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i interface{})``
 
-  ``interface{}``に渡されたポインタ型が``*struct``か``*[]struct``か``*[]*struct``かをそれぞれ判定します。
+  Check the pointer passed as ``interface{}`` is ``*struct`` or ``*[]struct`` or ``*[]*struct``.
+  This is useful to check type definition in ``Decode`` function.
 
 * ``runtimescan.NewStructInstance(i interface{})``
 
-  引数で渡されたポインタ型を元に、インスタンスを生成して返します。引数は``*struct``か``*[]struct``か``*[]*struct``のいずれかを受け付け、``*struct``を返します。
+  Generate a new instance based on passed type. Whether the input is ``*struct`` or ``*[]struct`` or ``*[]*struct``, it returns ``*struct``.
 
-### 応用例
+### Advanced usage samples
 
 
-#### 2つの構造体のインスタンスの比較
+#### Compare two structure
 
-``runtimescan/Encode()``をそれぞれのインスタンスごとに呼び、結果を``map``に入れてから比較することで構造体の比較が実現できます。
+Call ``runtimescan.Encode()`` for each instance and stores the structs' fields into ``map``. Then compare the result in ``map``.
 
-#### 構造体のコピー
+#### Copy structure
 
-``runtimescan/Encode()``をソースのインスタンスに対して呼び出し、``map``に一時的に値を入れてからそれを元に``runtimescan/Decode()``を呼び出すことで、構造体間でフィールドのコピーが行えます。
+Call ``runtimescan.Encode()`` for source instance and stores the struct's fields into ``map``. Then call ``runtimescan.Decode()``.
 
 ## License
 

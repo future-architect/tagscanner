@@ -8,9 +8,9 @@
 
 主に3つの機能があります。
 
-* 構造体のデータを外部に書き出す(``runtimescan/Encode()``)
-* 外部のデータを構造体の書き込む(``runtimescan/Decode()``)
-* 構造体を元にコード生成を行う(``staticscan/Scan()``)
+* 構造体のデータを外部に書き出す(``runtimescan.Encode()``)
+* 外部のデータを構造体の書き込む(``runtimescan.Decode()``)
+* 構造体を元にコード生成を行う(``staticscan.Scan()``)
 
 ``runtimescan``パッケージは、実行時に動的に構造体をパースして処理します。
 ``staticscan``パッケージは、静的解析・コードジェネレータ用です。
@@ -33,7 +33,7 @@
 
 ### 基本の使い方
 
-#### 構造体のデータを外部に書き出す(``runtimescan/Encode()``)
+#### 構造体のデータを外部に書き出す(``runtimescan.Encode()``)
 
 まずは``Encoder``インタフェースを満たす構造体を作ります。出力先を構造体のフィールドに設定しておきます。
 
@@ -76,7 +76,7 @@ func Encode(dest map[string]interface{}, src interface{}) error {
 }
 ```
 
-#### 外部のデータを構造体の書き込む(``runtimescan/Decode()``)
+#### 外部のデータを構造体の書き込む(``runtimescan.Decode()``)
 
 まずは``Decoder``インタフェースを満たす構造体を作ります。入力元を構造体のフィールドに設定しておきます。
 
@@ -133,7 +133,7 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
 * ``runtimescan.IsPointerOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i interface{})``
 
-  ``interface{}``に渡されたポインタ型が``*struct``か``*[]struct``か``*[]*struct``かをそれぞれ判定します。
+  ``interface{}``に渡されたポインタ型が``*struct``か``*[]struct``か``*[]*struct``かをそれぞれ判定します。``Decode()``を実装する時の型チェックに使います。
 
 * ``runtimescan.NewStructInstance(i interface{})``
 
@@ -144,11 +144,11 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
 #### 2つの構造体のインスタンスの比較
 
-``runtimescan/Encode()``をそれぞれのインスタンスごとに呼び、結果を``map``に入れてから比較することで構造体の比較が実現できます。
+``runtimescan.Encode()``をそれぞれのインスタンスごとに呼び、結果を``map``に入れてから比較することで構造体の比較が実現できます。
 
 #### 構造体のコピー
 
-``runtimescan/Encode()``をソースのインスタンスに対して呼び出し、``map``に一時的に値を入れてからそれを元に``runtimescan/Decode()``を呼び出すことで、構造体間でフィールドのコピーが行えます。
+``runtimescan.Encode()``をソースのインスタンスに対して呼び出し、``map``に一時的に値を入れてからそれを元に``runtimescan.Decode()``を呼び出すことで、構造体間でフィールドのコピーが行えます。
 
 ## ライセンス
 
