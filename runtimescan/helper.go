@@ -1,6 +1,7 @@
 package runtimescan
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -61,4 +62,51 @@ func Str2PrimitiveValue(value string, elemType reflect.Type) (interface{}, error
 	default:
 		return nil, fmt.Errorf("can't convert to %s", elemType.String())
 	}
+}
+
+func IsPointerOfSliceOfStruct(i interface{}) bool {
+	v := reflect.ValueOf(i)
+	if v.Type().Kind() != reflect.Ptr {
+		return false
+	}
+	if v.Type().Elem().Kind() != reflect.Slice {
+		return false
+	}
+	return v.Type().Elem().Elem().Kind() == reflect.Struct
+}
+
+func IsPointerOfSliceOfPointerOfStruct(i interface{}) bool {
+	v := reflect.ValueOf(i)
+	if v.Type().Kind() != reflect.Ptr {
+		return false
+	}
+	if v.Type().Elem().Kind() != reflect.Slice {
+		return false
+	}
+	if v.Type().Elem().Elem().Kind() != reflect.Ptr {
+		return false
+	}
+	return v.Type().Elem().Elem().Elem().Kind() == reflect.Struct
+}
+
+func IsPointerOfStruct(i interface{}) bool {
+	v := reflect.ValueOf(i)
+	if v.Type().Kind() != reflect.Ptr {
+		return false
+	}
+	return v.Type().Elem().Kind() == reflect.Struct
+}
+
+func NewStructInstance(i interface{}) (interface{}, error) {
+	if IsPointerOfStruct(i) {
+		v := reflect.New(reflect.TypeOf(i).Elem())
+		return v.Interface(), nil
+	} else if IsPointerOfSliceOfStruct(i) {
+		v := reflect.New(reflect.TypeOf(i).Elem().Elem())
+		return v.Interface(), nil
+	} else if IsPointerOfSliceOfPointerOfStruct(i) {
+		v := reflect.New(reflect.TypeOf(i).Elem().Elem().Elem())
+		return v.Interface(), nil
+	}
+	return nil, errors.New("input is not *Struct or *[]Struct")
 }

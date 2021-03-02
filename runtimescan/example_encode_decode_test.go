@@ -18,7 +18,6 @@ type cpy struct {
 
 func (c *cpy) VisitField(tag, value interface{}) (err error) {
 	t := tag.(*cpyStrategy)
-	log.Println(t, value)
 	c.values[t.Path] = value
 	return nil
 }
