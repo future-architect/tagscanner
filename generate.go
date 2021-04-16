@@ -1,3 +1,4 @@
+// +build tool
 package tools
 
 import (
