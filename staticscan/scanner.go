@@ -5,22 +5,18 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"log"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
 )
 
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
-
 type Field struct {
-	Name    string
-	Type    string
-	Tag     string
-	Comment string
+	Name     string
+	Type     string
+	Tag      string
+	Comment  string
+	FullPath string
 }
 
 type Struct struct {
@@ -28,6 +24,7 @@ type Struct struct {
 	StructName  string
 	Fields      []Field
 	Comment     string
+	FullPath    string
 }
 
 func parseType(e ast.Expr) (string, error) {
@@ -100,49 +97,39 @@ func Scan(rootPath, tagName string) ([]Struct, error) {
 				var comments []string
 				cmap := ast.NewCommentMap(fSet, st, astFile.Comments)
 				for _, comment := range cmap[st] {
-					log.Println(comment.Text())
 					comments = append(comments, comment.Text())
 				}
 				result := Struct{
 					PackageName: astFile.Name.Name,
-					StructName: name,
-					Comment: strings.Join(comments, ""),
+					StructName:  name,
+					Comment:     strings.Join(comments, ""),
+					FullPath:    cleanPath,
 				}
-				/*for _, c := range nt.Comment.List {
-					log.Println(c.Text)
-				}*/
-				log.Println("doc", nt.Doc)
-				/*for _, c := range nt.Doc.List {
-					log.Println(c.Text)
-				}*/
-				log.Printf("Found struct: %s\n", name)
 				for _, f := range st.Fields.List {
-					log.Println(f)
 					if f.Tag == nil {
 						continue
 					}
 					tag := reflect.StructTag(strings.Trim(f.Tag.Value, "`"))
 					tv, ok := tag.Lookup(tagName)
-					log.Println(f.Tag.Value, tv, ok)
 					if !ok {
 						continue
 					}
-					var names []string
-					for _, n := range f.Names {
-						names = append(names, n.Name)
-					}
 					typeName, err := parseType(f.Type)
 					if err != nil {
-						log.Println(err)
-						continue
+						panic(err)
 					}
-					result.Fields = append(result.Fields, Field{
-						Name: strings.Join(names, "."),
-						Type: typeName,
-						Tag:  tv,
-					})
+					for _, name := range f.Names {
+						result.Fields = append(result.Fields, Field{
+							Name:     name.Name,
+							Type:     typeName,
+							Tag:      tv,
+							FullPath: cleanPath,
+						})
+					}
 				}
-				results = append(results, result)
+				if len(result.Fields) > 0 {
+					results = append(results, result)
+				}
 				return true
 			})
 		}
