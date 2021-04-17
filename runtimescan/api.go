@@ -14,10 +14,11 @@ type Parser interface {
 	// Returned value of this method is passed to ExtractValue() method call.
 	//
 	// name: Field name
+	// tagKey: Tag key
 	// tagStr: Tag string
 	// pathStr: Field name for error message (it contains nested struct names)
 	// elemType: Field type
-	ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error)
+	ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error)
 }
 
 // Decoder is an interface that extracts value from some type and assign to struct instance.

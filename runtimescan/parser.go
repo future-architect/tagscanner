@@ -108,14 +108,15 @@ func (d *parser) parseTags(vi Parser, tags []string, t reflect.Type, path []stri
 			eKind = t.Field(i).Type.Kind()
 			eType = t.Field(i).Type
 		}
-		var tag string
+		var tag, tagKey string
 		for _, t := range tags {
 			tag = f.Tag.Get(t)
 			if tag != "" {
+				tagKey = t
 				continue
 			}
 		}
-		t, err := vi.ParseTag(f.Name, tag, pathStr, eType)
+		t, err := vi.ParseTag(f.Name, tagKey, tag, pathStr, eType)
 		var skipTraverse bool
 		var skipAdd bool
 		if err == Skip {

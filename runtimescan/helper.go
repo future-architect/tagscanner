@@ -13,6 +13,7 @@ import (
 // BasicParseTag() creates this instance.
 type BasicTag struct {
 	Name     string
+	TagKey   string
 	Tag      string
 	Path     string
 	ElemType reflect.Type
@@ -22,12 +23,13 @@ type BasicTag struct {
 //
 // Both Encoder and Decoder should implement ParseTag() method.
 // This is the simplest implementation of these methods.
-func BasicParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func BasicParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
 	if tagStr == "" {
 		tagStr = strings.ToLower(name)
 	}
 	return &BasicTag{
 		Name: name,
+		TagKey: tagKey,
 		Tag: tagStr,
 		Path: pathStr,
 		ElemType: elemType,

@@ -10,7 +10,7 @@ type mapEncoder struct {
 	result map[string]interface{}
 }
 
-func (m mapEncoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m mapEncoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
 	return tagStr, nil
 }
 

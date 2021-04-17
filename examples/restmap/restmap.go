@@ -37,7 +37,7 @@ type requestDecoder struct {
 	json       map[string]interface{}
 }
 
-func (d requestDecoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (d requestDecoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
 	return ParseRestTag(name, tagStr, pathStr, elemType)
 }
 
@@ -168,5 +168,5 @@ func Decode(dest interface{}, r *http.Request) error {
 		once:     &sync.Once{},
 		bodyType: bodyUnread,
 	}
-	return runtimescan.Decode(dest, "rest", decoder)
+	return runtimescan.Decode(dest, []string{"rest"}, decoder)
 }

@@ -38,7 +38,7 @@ func (c cpy) ExtractValue(tag interface{}) (value interface{}, err error) {
 	return nil, runtimescan.Skip
 }
 
-func (c cpy) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (c cpy) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
 	if tagStr == "skip" {
 		return nil, runtimescan.Skip
 	}

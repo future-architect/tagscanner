@@ -12,7 +12,7 @@ type mapDecoder struct {
 	values map[string]interface{}
 }
 
-func (d mapDecoder) ParseTag(name, tagStr, pathStr string, eType reflect.Type) (interface{}, error) {
+func (d mapDecoder) ParseTag(name, tagKey, tagStr, pathStr string, eType reflect.Type) (interface{}, error) {
 	return tagStr, nil
 }
 

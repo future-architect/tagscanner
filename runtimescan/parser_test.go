@@ -11,7 +11,7 @@ import (
 type dummyVisitor struct {
 }
 
-func (dv dummyVisitor) ParseTag(name, tag, pathStr string, eType reflect.Type) (interface{}, error) {
+func (dv dummyVisitor) ParseTag(name, tagKey, tag, pathStr string, eType reflect.Type) (interface{}, error) {
 	if tag == "" {
 		return nil, Skip
 	}

@@ -18,7 +18,7 @@ type compare struct {
 	values map[string]interface{}
 }
 
-func (c compare) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (c compare) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
 	if tagStr == "skip" {
 		return nil, runtimescan.Skip
 	}
