@@ -3,6 +3,7 @@ package runtimescan_test
 import (
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 
 	"gitlab.com/osaki-lab/tagscanner/runtimescan"
@@ -52,14 +53,14 @@ func Compare(s1, s2 interface{}) (bool, []string, error) {
 	c1 := compare{
 		values: make(map[string]interface{}),
 	}
-	err := runtimescan.Encode(s1, "cmp", &c1)
+	err := runtimescan.Encode(s1, []string{"cmp"}, &c1)
 	if err != nil {
 		return false, nil, err
 	}
 	c2 := compare{
 		values: make(map[string]interface{}),
 	}
-	err = runtimescan.Encode(s2, "cmp", &c2)
+	err = runtimescan.Encode(s2, []string{"cmp"}, &c2)
 	if err != nil {
 		return false, nil, err
 	}
@@ -75,6 +76,7 @@ func Compare(s1, s2 interface{}) (bool, []string, error) {
 			unmatch = append(unmatch, k)
 		}
 	}
+	sort.Strings(unmatch)
 	return len(unmatch) == 0, unmatch, nil
 }
 
@@ -115,6 +117,6 @@ func Example_compare() {
 	fmt.Printf("err: %v\n", err)
 	// Output:
 	// equal: false
-	// different keys: [DifferentValue DifferentType OnlyOnS1 OnlyOnS2]
+	// different keys: [DifferentType DifferentValue OnlyOnS1 OnlyOnS2]
 	// err: <nil>
 }

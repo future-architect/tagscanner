@@ -5,8 +5,8 @@ import (
 )
 
 // Encode convert from some source into struct by using tag information.
-func Encode(src interface{}, tag string, encoder Encoder) error {
-	v, err := getParser(src, tag, encoder)
+func Encode(src interface{}, tags []string, encoder Encoder) error {
+	v, err := getParser(src, tags, encoder)
 	if err != nil {
 		return err
 	}

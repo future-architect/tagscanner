@@ -31,7 +31,7 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 	dec := &decoder{
 		src: src,
 	}
-	return runtimescan.Decode(dest, "map", dec)
+	return runtimescan.Decode(dest, []string{"map"}, dec)
 }
 
 func Example_map2struct() {

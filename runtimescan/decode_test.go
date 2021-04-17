@@ -55,7 +55,7 @@ func Test_decode(t *testing.T) {
 					String string `map:"string"`
 				}
 				target := Target{}
-				v, err := newParser(&d, "map", &target)
+				v, err := newParser(&d, []string{"map"}, &target)
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				err = decode(&target, v, &d)
@@ -72,7 +72,7 @@ func Test_decode(t *testing.T) {
 					String string `map:"not-found"` // if tag is not found, test decoder returns Skip
 				}
 				target := Target{}
-				v, err := newParser(&d, "map", &target)
+				v, err := newParser(&d, []string{"map"}, &target)
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				err = decode(&target, v, &d)
@@ -89,7 +89,7 @@ func Test_decode(t *testing.T) {
 					string string `map:"string"` // this is private
 				}
 				target := Target{}
-				v, err := newParser(&d, "map", &target)
+				v, err := newParser(&d, []string{"map"}, &target)
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				err = decode(&target, v, &d)
@@ -106,7 +106,7 @@ func Test_decode(t *testing.T) {
 					Error  error         `map:"interface"`
 				}
 				target := Target{}
-				v, err := newParser(&d, "map", &target)
+				v, err := newParser(&d, []string{"map"}, &target)
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				err = decode(&target, v, &d)

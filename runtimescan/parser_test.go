@@ -169,7 +169,7 @@ func Test_visitor_parse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			v := &parser{}
 			val := reflect.ValueOf(tt.args.e())
-			err := v.parse(tt.args.vi, "rest", val.Elem().Type())
+			err := v.parse(tt.args.vi, []string{"rest"}, val.Elem().Type())
 			if tt.wantError {
 				assert.Error(t, err)
 			} else {

@@ -52,11 +52,11 @@ func Copy(dest, src interface{}) error {
 	c := &cpy{
 		values: make(map[string]interface{}),
 	}
-	err := runtimescan.Encode(src, "copy", c)
+	err := runtimescan.Encode(src, []string{"copy"}, c)
 	if err != nil {
 		return err
 	}
-	return runtimescan.Decode(dest, "copy", c)
+	return runtimescan.Decode(dest, []string{"copy"}, c)
 }
 
 type Struct struct {

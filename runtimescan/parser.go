@@ -30,14 +30,14 @@ type parser struct {
 	panicWhenParsing bool
 }
 
-func newParser(vi Parser, tag string, s interface{}) (*parser, error) {
+func newParser(vi Parser, tags []string, s interface{}) (*parser, error) {
 	err := shouldPointerOfStruct(s)
 	if err != nil {
 		return nil, err
 	}
 
 	visitor := &parser{}
-	visitor.parse(vi, tag, reflect.ValueOf(s).Type().Elem())
+	visitor.parse(vi, tags, reflect.ValueOf(s).Type().Elem())
 	if len(visitor.errors) == 0 {
 		return visitor, nil
 	}
@@ -56,12 +56,12 @@ func shouldPointerOfStruct(s interface{}) error {
 	return nil
 }
 
-func (d *parser) parse(vi Parser, tag string, t reflect.Type) error {
+func (d *parser) parse(vi Parser, tags []string, t reflect.Type) error {
 	d.errors = nil
 	d.fields = nil
 	d.fieldIndexes = nil
 	d.fieldOps = nil
-	d.parseTags(vi, tag, t, nil)
+	d.parseTags(vi, tags, t, nil)
 	return nil
 }
 
@@ -77,7 +77,7 @@ func isPublic(f reflect.StructField) bool {
 	return unicode.IsUpper(first)
 }
 
-func (d *parser) parseTags(vi Parser, tag string, t reflect.Type, path []string) {
+func (d *parser) parseTags(vi Parser, tags []string, t reflect.Type, path []string) {
 	for i := 0; i < t.NumField(); i++ {
 		index := i
 		f := t.Field(i)
@@ -108,7 +108,14 @@ func (d *parser) parseTags(vi Parser, tag string, t reflect.Type, path []string)
 			eKind = t.Field(i).Type.Kind()
 			eType = t.Field(i).Type
 		}
-		t, err := vi.ParseTag(f.Name, f.Tag.Get(tag), pathStr, eType)
+		var tag string
+		for _, t := range tags {
+			tag = f.Tag.Get(t)
+			if tag != "" {
+				continue
+			}
+		}
+		t, err := vi.ParseTag(f.Name, tag, pathStr, eType)
 		var skipTraverse bool
 		var skipAdd bool
 		if err == Skip {
@@ -132,7 +139,7 @@ func (d *parser) parseTags(vi Parser, tag string, t reflect.Type, path []string)
 			} else {
 				d.fields = append(d.fields, nil)
 			}
-			d.parseTags(vi, tag, f.Type, path)
+			d.parseTags(vi, tags, f.Type, path)
 			d.fieldIndexes = append(d.fieldIndexes, -1)
 			d.fieldOps = append(d.fieldOps, leaveChildOp)
 			d.fields = append(d.fields, nil)
@@ -157,26 +164,23 @@ type parserCacheKey struct {
 
 var parsers = make(map[parserCacheKey]*parser)
 
-func getParser(dest interface{}, tag string, parser Parser) (*parser, error) {
+func getParser(dest interface{}, tags []string, parser Parser) (*parser, error) {
 	err := shouldPointerOfStruct(dest)
 	if err != nil {
 		return nil, err
 	}
-	v, ok := parsers[parserCacheKey{
+	key := parserCacheKey{
 		Type:   reflect.ValueOf(dest).Type(),
 		Parser: reflect.ValueOf(parser).Elem().Type(),
-		Tag:    tag,
-	}]
+		Tag:    strings.Join(tags, ":"),
+	}
+	v, ok := parsers[key]
 	if !ok {
-		v, err = newParser(parser, tag, dest)
+		v, err = newParser(parser, tags, dest)
 		if err != nil {
 			return nil, err
 		}
-		parsers[parserCacheKey{
-			Type:   reflect.ValueOf(dest).Type(),
-			Parser: reflect.ValueOf(parser).Elem().Type(),
-			Tag:    tag,
-		}] = v
+		parsers[key] = v
 	}
 	return v, nil
 }

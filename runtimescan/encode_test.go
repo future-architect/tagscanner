@@ -47,7 +47,7 @@ func Test_encode(t *testing.T) {
 					Int: 12345,
 					String: "test string",
 				}
-				v, err := newParser(&m, "map", &source)
+				v, err := newParser(&m, []string{"map"}, &source)
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				err = encode(&m, v, &source)
@@ -75,7 +75,7 @@ func Test_encode(t *testing.T) {
 						String: "test string",
 					},
 				}
-				v, err := newParser(&m, "map", &source)
+				v, err := newParser(&m, []string{"map"}, &source)
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				err = encode(&m, v, &source)

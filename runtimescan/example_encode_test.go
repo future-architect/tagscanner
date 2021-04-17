@@ -34,7 +34,7 @@ func Encode(dest map[string]interface{}, src interface{}) error {
 	enc := &encoder{
 		dest: dest,
 	}
-	return runtimescan.Encode(src, "map", enc)
+	return runtimescan.Encode(src, []string{"map"}, enc)
 }
 
 func Example_struct2map() {

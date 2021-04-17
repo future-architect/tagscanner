@@ -5,8 +5,8 @@ import (
 )
 
 // Decode convert from some source into struct by using tag information.
-func Decode(dest interface{}, tag string, decoder Decoder) error {
-	v, err := getParser(dest, tag, decoder)
+func Decode(dest interface{}, tags []string, decoder Decoder) error {
+	v, err := getParser(dest, tags, decoder)
 	if err != nil {
 		return err
 	}
