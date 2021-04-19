@@ -6,16 +6,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 
 	"gitlab.com/osaki-lab/tagscanner/examples/restmap"
 )
-
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
 
 func ExampleDecode() {
 	r := createRequest()

@@ -91,7 +91,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 			case *string:
 				dest.Set(reflect.ValueOf(v))
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (1)")
 			}
 		case reflect.Int:
 			var intValue int
@@ -129,7 +129,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 				intValue = int(value64)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (2)")
 			}
 			dest.Set(reflect.ValueOf(&intValue))
 		case reflect.Uint:
@@ -168,7 +168,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 				uintValue = uint(value64)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (3)")
 			}
 			dest.Set(reflect.ValueOf(&uintValue))
 		case reflect.Float64:
@@ -222,7 +222,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 				dest.Set(reflect.ValueOf(&value))
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (4)")
 			}
 		case reflect.Bool:
 			switch v := value.(type) {
@@ -259,7 +259,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				value := lv != "false" && lv != "no" && lv != ""
 				dest.Set(reflect.ValueOf(&value))
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (5)")
 			}
 		case reflect.Struct:
 			v := reflect.ValueOf(value)
@@ -279,7 +279,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 			}
 		default:
-			panic("please send PR to support this type")
+			panic("please send PR to support this type (6)")
 		}
 	} else {
 		switch eKind {
@@ -314,7 +314,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 			case *string:
 				dest.SetString(*v)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (7)")
 			}
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			switch v := value.(type) {
@@ -355,7 +355,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 				dest.SetInt(value)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (8)")
 			}
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 			switch v := value.(type) {
@@ -396,7 +396,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 				dest.SetUint(value)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (9)")
 			}
 		case reflect.Float64, reflect.Float32:
 			switch v := value.(type) {
@@ -441,7 +441,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				}
 				dest.SetFloat(value)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (10)")
 			}
 		case reflect.Bool:
 			switch v := value.(type) {
@@ -476,7 +476,7 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 				value := lv != "false" && lv != "no" && lv != ""
 				dest.SetBool(value)
 			default:
-				panic("please send PR to support this type")
+				panic("please send PR to support this type (12)")
 			}
 		case reflect.Interface:
 			v := reflect.ValueOf(value)
@@ -495,8 +495,23 @@ func fuzzyAssign(dest reflect.Value, eType reflect.Type, eKind reflect.Kind, isP
 					return fmt.Errorf("struct is not assignable to interface (dest=%s, src=%s): %w", eType.String(), v.Type().String(), ErrAssignError)
 				}
 			}
+		case reflect.Slice:
+			v := reflect.ValueOf(value)
+			if v.Kind() == reflect.Ptr {
+				if v.Elem().Type().AssignableTo(eType) || v.Type().AssignableTo(eType) {
+					dest.Set(v)
+				} else {
+					return fmt.Errorf("struct is not assignable to interface (dest=%s, src=%s): %w", eType.String(), v.Elem().Type().String(), ErrAssignError)
+				}
+			} else {
+				if v.Type().AssignableTo(eType) {
+					dest.Set(v)
+				} else {
+					return fmt.Errorf("struct is not assignable to interface (dest=%s, src=%s): %w", eType.String(), v.Type().String(), ErrAssignError)
+				}
+			}
 		default:
-			panic("please send PR to support this type")
+			panic("please send PR to support this type (13)")
 		}
 	}
 	return nil

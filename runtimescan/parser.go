@@ -113,7 +113,7 @@ func (d *parser) parseTags(vi Parser, tags []string, t reflect.Type, path []stri
 			tag = f.Tag.Get(t)
 			if tag != "" {
 				tagKey = t
-				continue
+				break
 			}
 		}
 		t, err := vi.ParseTag(f.Name, tagKey, tag, pathStr, eType)
