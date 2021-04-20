@@ -109,7 +109,7 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 	dec := &decoder{
 		src: src,
 	}
-	return runtimescan.Decode(dest, "map", dec)
+	return runtimescan.Decode(dest, []string{"map"}, dec)
 }
 
 
@@ -141,7 +141,6 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
 ### 応用例
 
-
 #### 2つの構造体のインスタンスの比較
 
 ``runtimescan.Encode()``をそれぞれのインスタンスごとに呼び、結果を``map``に入れてから比較することで構造体の比較が実現できます。
@@ -149,6 +148,59 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 #### 構造体のコピー
 
 ``runtimescan.Encode()``をソースのインスタンスに対して呼び出し、``map``に一時的に値を入れてからそれを元に``runtimescan.Decode()``を呼び出すことで、構造体間でフィールドのコピーが行えます。
+
+### サンプル
+
+#### examples/restmap
+
+``runtimescan.Decode``を使い、HTTPリクエストの内容を構造体にマップします。
+次のような構造体を作成して、``restmap.Decode()``に``http.Request``とこの構造体のインスタンスをわたします。
+``body``のタグはリクエストの``Content-Type``ヘッダーを見て、``application/x-www-form-urlencoded``, ``multipart/form-data``, ``application/json``のいづれかであればパースしてデータを読み込みます。
+ファイルのアップロードにも対応します。``rest:"path:param"`で、パスの一部から文字列を取り出しますが、今のところchi routerにのみ対応しています。
+
+```go
+type Request struct {
+	Method  string                `rest:"method"`
+	Auth    string                `rest:"header:Authorization"`
+	TraceID string                `rest:"cookie:trace-id"`
+	Title   string                `rest:"body:title-field"`
+	File    multipart.File        `rest:"body:file-field"`
+	Header  *multipart.FileHeader `rest:"body:file-field"`
+	Ctx     context.Context       `rest:"context"`
+}
+```
+
+#### examples/binarypatternmatch
+
+``runtimescan.Decode``を使い、バイナリをロードします。タグに記述されたルールに従い、バイト列を読み込みアサインします。
+
+* ``数値``でビット数かバイト数を指定します
+* ``<< >>``で即値を指定します。文字列か数値が指定可能です。数値の場合は``/``でビット数かバイト数を指定します
+
+```go
+type Image struct {
+	Header     string `bytes:"<<HEAD>>"`
+	Height     int32  `bytes:"4"`
+    Width      int32  `bytes:"4"`
+	ReadOnly   bool   `bits:"1"`
+	_          byte   `bits:"3"`
+	ColorType  byte   `bits:"4"'`
+	CheckDigit byte   `bits:"<<0x5/6>>"`
+}
+
+func main() {
+	var image Image
+	f, _ := os.Open("imagefile")
+    err := binarypatternmatch.Decode(&image, f)
+}
+
+```
+
+## 静的なタグの取得
+
+ソースコードを静的スキャンして構造体情報を取り出します。タグを元にしたコード生成のための機能です。
+
+``staticscan.Scan(rootPath, tagName: string) ([]staticscan.Struct, error)``
 
 ## ライセンス
 

@@ -110,7 +110,7 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 	dec := &decoder{
 		src: src,
 	}
-	return runtimescan.Decode(dest, "map", dec)
+	return runtimescan.Decode(dest, []string{"map"}, dec)
 }
 
 
@@ -143,7 +143,6 @@ This package contains several utility functions.
 
 ### Advanced usage samples
 
-
 #### Compare two structure
 
 Call ``runtimescan.Encode()`` for each instance and stores the structs' fields into ``map``. Then compare the result in ``map``.
@@ -151,6 +150,61 @@ Call ``runtimescan.Encode()`` for each instance and stores the structs' fields i
 #### Copy structure
 
 Call ``runtimescan.Encode()`` for source instance and stores the struct's fields into ``map``. Then call ``runtimescan.Decode()``.
+
+### Examples
+
+#### examples/restmap
+
+This maps HTTP request to struct instance by using ``runtimescan.Decode``.
+Prepare struct like the following and pass its instance and ``http.Request`` to ``restmpa.Decode()``.
+``body`` tag detects body format by checking ``Content-Type`` header and accepts ``application/x-www-form-urlencoded``, ``multipart/form-data``, ``application/json`` format.
+It also support file uploading. ``rest:"path:param"`` can extract one of requested path when you uses chi router.
+
+```go
+type Request struct {
+	Method  string                `rest:"method"`
+	Auth    string                `rest:"header:Authorization"`
+	TraceID string                `rest:"cookie:trace-id"`
+	Title   string                `rest:"body:title-field"`
+	File    multipart.File        `rest:"body:file-field"`
+	Header  *multipart.FileHeader `rest:"body:file-field"`
+	Ctx     context.Context       `rest:"context"`
+}
+```
+
+#### examples/binarypatternmatch
+
+Loads binary data by using ``runtimescan.Decode``. It assigns byte arrays into struct's instance.
+
+* ``num`` specifies length (bits or bytes)
+* ``<< >>`` specifies literal. You can use string or number. The number can has length by using ``/``.
+
+```go
+type Image struct {
+	Header     string `bytes:"<<HEAD>>"`
+	Height     int32  `bytes:"4"`
+    Width      int32  `bytes:"4"`
+	ReadOnly   bool   `bits:"1"`
+	_          byte   `bits:"3"`
+	ColorType  byte   `bits:"4"'`
+	CheckDigit byte   `bits:"<<0x5/6>>"`
+}
+
+func main() {
+	var image Image
+	f, _ := os.Open("imagefile")
+    err := binarypatternmatch.Decode(&image, f)
+}
+
+```
+
+## Search tags statically
+
+Extrude struct's information by parsing codes statically.
+This is for code generation.
+
+``staticscan.Scan(rootPath, tagName: string) ([]staticscan.Struct, error)``
+
 
 ## License
 
