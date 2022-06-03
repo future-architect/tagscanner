@@ -26,9 +26,10 @@ func encode(encoder Encoder, v *parser, src interface{}) error {
 			var value interface{}
 			if field.isPtr {
 				if fv.IsNil() {
-					continue
+					value = nil
+				} else {
+					value = fv.Elem().Interface()
 				}
-				value = fv.Elem().Interface()
 			} else {
 				value = fv.Interface()
 			}
