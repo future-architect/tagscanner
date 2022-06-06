@@ -1,9 +1,10 @@
 package runtimescan
 
 import (
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type mapEncoder struct {
@@ -30,8 +31,8 @@ func (m mapEncoder) LeaveChild(tag interface{}) (err error) {
 
 func Test_encode(t *testing.T) {
 	tests := []struct {
-		name    string
-		check   func(t *testing.T)
+		name  string
+		check func(t *testing.T)
 	}{
 		{
 			name: "simple tags",
@@ -40,12 +41,16 @@ func Test_encode(t *testing.T) {
 					result: make(map[string]interface{}),
 				}
 				type Source struct {
-					Int    int    `map:"int"`
-					String string `map:"string"`
+					Int       int     `map:"int"`
+					String    string  `map:"string"`
+					PtrInt    *int    `map:"ptr_int"`
+					PtrString *string `map:"ptr_str"`
 				}
 				source := Source{
-					Int: 12345,
-					String: "test string",
+					Int:       12345,
+					String:    "test string",
+					PtrInt:    &[]int{10}[0],
+					PtrString: nil,
 				}
 				v, err := newParser(&m, []string{"map"}, &source)
 				assert.NoError(t, err)
@@ -54,6 +59,8 @@ func Test_encode(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, 12345, m.result["int"])
 				assert.Equal(t, "test string", m.result["string"])
+				assert.Equal(t, 10, m.result["ptr_int"])
+				assert.Equal(t, nil, m.result["ptr_string"])
 			},
 		},
 		{
@@ -71,7 +78,7 @@ func Test_encode(t *testing.T) {
 				}
 				source := Source{
 					Child: Child{
-						Int: 12345,
+						Int:    12345,
 						String: "test string",
 					},
 				}
