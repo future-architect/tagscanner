@@ -1,3 +1,4 @@
+//go:build tool
 // +build tool
 
 package tagscanner

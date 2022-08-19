@@ -2,12 +2,13 @@ package restmap
 
 import (
 	"encoding/json"
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
 	"mime/multipart"
 	"net/http"
 	"reflect"
 	"strings"
 	"sync"
+
+	"github.com/future-architect/tagscanner/runtimescan"
 
 	"github.com/go-chi/chi/v5"
 )

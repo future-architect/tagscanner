@@ -7,8 +7,8 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/future-architect/tagscanner/runtimescan"
 	"github.com/sergi/go-diff/diffmatchpatch"
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
 )
 
 type FieldType string

@@ -5,7 +5,7 @@ import (
 	"log"
 	"reflect"
 
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
+	"github.com/future-architect/tagscanner/runtimescan"
 )
 
 // User should implement runtimescan.Decoder interface

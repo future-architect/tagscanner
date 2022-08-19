@@ -1,6 +1,6 @@
 # tagscanner
 
-[![Go Reference](https://pkg.go.dev/badge/gitlab.com/osaki-lab/tagscanner.svg)](https://pkg.go.dev/gitlab.com/osaki-lab/tagscanner)
+[![Go Reference](https://pkg.go.dev/badge/github.com/future-architect/tagscanner.svg)](https://pkg.go.dev/github.com/future-architect/tagscanner)
 
 This package is a helper library for creating a library that interacts with external data using structure tags.
 

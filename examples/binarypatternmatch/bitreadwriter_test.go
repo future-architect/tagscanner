@@ -87,9 +87,9 @@ func Test_copyWithOffset(t *testing.T) {
 
 func TestBitWriter(t *testing.T) {
 	tests := []struct {
-		name    string
-		setup   func(w *bitWriter)
-		want    []byte
+		name  string
+		setup func(w *bitWriter)
+		want  []byte
 	}{
 		{
 			name: "single byte",

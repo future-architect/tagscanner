@@ -107,7 +107,7 @@ func (b *bitWriter) WriteBool(data bool) {
 			b.writer.Write([]byte{(1 << 7) | b.remainedByte})
 			b.bitCap = 8
 		} else {
-			b.remainedByte = b.remainedByte | 1 << (8-b.bitCap)
+			b.remainedByte = b.remainedByte | 1<<(8-b.bitCap)
 			b.bitCap -= 1
 		}
 	} else {
@@ -132,8 +132,8 @@ func (b *bitWriter) WriteByte(data byte, bit int) {
 	if b.bitCap == 8 {
 		b.remainedByte = maskBits(data, bit)
 		b.bitCap -= bit
-	} else if b.bitCap + bit <= 8 {
-		b.remainedByte = b.remainedByte | maskBits(data, bit) << (8-b.bitCap)
+	} else if b.bitCap+bit <= 8 {
+		b.remainedByte = b.remainedByte | maskBits(data, bit)<<(8-b.bitCap)
 		b.bitCap -= bit
 		if b.bitCap == 0 {
 			b.bitCap = 8
@@ -141,20 +141,20 @@ func (b *bitWriter) WriteByte(data byte, bit int) {
 			b.remainedByte = 0
 		}
 	} else {
-		b.writer.Write([]byte{b.remainedByte | maskBits(data, b.bitCap) << (8-b.bitCap)})
+		b.writer.Write([]byte{b.remainedByte | maskBits(data, b.bitCap)<<(8-b.bitCap)})
 		b.remainedByte = data >> b.bitCap
 		b.bitCap = b.bitCap + bit - 8
 	}
 }
 
 func (b *bitWriter) WriteBytes(data []byte, bit int) {
-	if b.bitCap == 8 && bit == len(data) * 8 {
+	if b.bitCap == 8 && bit == len(data)*8 {
 		b.writer.Write(data)
 		return
 	}
 	if b.bitCap == 8 {
 		bytes := bit / 8
 		b.writer.Write(data[:bytes])
-		b.WriteByte(data[len(data)-1], bit % 8)
+		b.WriteByte(data[len(data)-1], bit%8)
 	}
 }

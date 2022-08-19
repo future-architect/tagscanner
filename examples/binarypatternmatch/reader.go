@@ -8,7 +8,7 @@ import (
 	"io"
 	"reflect"
 
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
+	"github.com/future-architect/tagscanner/runtimescan"
 )
 
 var (
@@ -45,7 +45,7 @@ func (b *binaryDecoder) ExtractValue(tag interface{}) (value interface{}, err er
 	}
 
 	// pattern match
-	if len(t.Literal) > 0 && !bytes.Equal(t.Literal, b.buffer){
+	if len(t.Literal) > 0 && !bytes.Equal(t.Literal, b.buffer) {
 		return nil, ErrNotMatch
 	}
 
@@ -117,7 +117,7 @@ func (b *binaryDecoder) readBits(bits int) error {
 		needToRead := bits - (8 - b.offset)
 		if needToRead > 0 {
 			ntrb := needToRead / 8
-			if needToRead % 7 != 0 {
+			if needToRead%7 != 0 {
 				ntrb += 1
 			}
 			if ntrb > 0 {
@@ -154,9 +154,9 @@ func (b *binaryDecoder) readBytes(l int) error {
 
 func Decode(dest interface{}, reader io.Reader) error {
 	decoder := &binaryDecoder{
-		reader: reader,
+		reader:  reader,
 		lengths: make(map[string]uint64),
-		offset: 8,
+		offset:  8,
 	}
 	return runtimescan.Decode(dest, []string{"bits", "bytes", "length"}, decoder)
 }

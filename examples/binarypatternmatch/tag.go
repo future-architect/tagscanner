@@ -3,18 +3,19 @@ package binarypatternmatch
 import (
 	"encoding/binary"
 	"fmt"
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/future-architect/tagscanner/runtimescan"
 )
 
 type TagKey string
 
 const (
-	Bits               TagKey = "bits"
-	Bytes              TagKey = "bytes"
-	Length             TagKey = "length"
+	Bits   TagKey = "bits"
+	Bytes  TagKey = "bytes"
+	Length TagKey = "length"
 )
 
 type binaryTag struct {
@@ -122,9 +123,9 @@ func parseBinaryTag(fieldName, tagKey, tagValue, fullPath string, eType reflect.
 			}
 		} else if isLabel(tagValue) {
 			return &binaryTag{
-				Type:    Bits,
-				EType:   eType,
-				Label:   tagValue,
+				Type:  Bits,
+				EType: eType,
+				Label: tagValue,
 			}, nil
 		} else {
 			v, err := strconv.ParseUint(tagValue, 10, 64)
@@ -155,9 +156,9 @@ func parseBinaryTag(fieldName, tagKey, tagValue, fullPath string, eType reflect.
 			}
 		} else if isLabel(tagValue) {
 			return &binaryTag{
-				Type:    Bytes,
-				EType:   eType,
-				Label:   tagValue,
+				Type:  Bytes,
+				EType: eType,
+				Label: tagValue,
 			}, nil
 		} else {
 			v, err := strconv.ParseUint(tagValue, 10, 64)

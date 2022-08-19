@@ -28,10 +28,10 @@ func BasicParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) 
 		tagStr = strings.ToLower(name)
 	}
 	return &BasicTag{
-		Name: name,
-		TagKey: tagKey,
-		Tag: tagStr,
-		Path: pathStr,
+		Name:     name,
+		TagKey:   tagKey,
+		Tag:      tagStr,
+		Path:     pathStr,
 		ElemType: elemType,
 	}, nil
 }

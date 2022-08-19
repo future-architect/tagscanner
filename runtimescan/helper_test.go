@@ -19,46 +19,46 @@ func TestStr2PrimitiveValue(t *testing.T) {
 		{
 			name: "int",
 			args: args{
-				value: "12345",
+				value:    "12345",
 				elemType: reflect.TypeOf(12345),
 			},
-			want: int64(12345),
+			want:    int64(12345),
 			wantErr: false,
 		},
 		{
 			name: "uint",
 			args: args{
-				value: "12345",
+				value:    "12345",
 				elemType: reflect.TypeOf(uint(12345)),
 			},
-			want: uint64(12345),
+			want:    uint64(12345),
 			wantErr: false,
 		},
 		{
 			name: "float",
 			args: args{
-				value: "12345.6",
+				value:    "12345.6",
 				elemType: reflect.TypeOf(float64(12345)),
 			},
-			want: 12345.6,
+			want:    12345.6,
 			wantErr: false,
 		},
 		{
 			name: "bool",
 			args: args{
-				value: "true",
+				value:    "true",
 				elemType: reflect.TypeOf(true),
 			},
-			want: true,
+			want:    true,
 			wantErr: false,
 		},
 		{
 			name: "string",
 			args: args{
-				value: "hello world",
+				value:    "hello world",
 				elemType: reflect.TypeOf("hello"),
 			},
-			want: "hello world",
+			want:    "hello world",
 			wantErr: false,
 		},
 	}
@@ -86,21 +86,21 @@ func TestIsPointerOfSliceOfStruct(t *testing.T) {
 		want bool
 	}{
 		{
-			name:"true: pointer of slice of struct",
+			name: "true: pointer of slice of struct",
 			args: args{
 				i: &[]struct{}{},
 			},
 			want: true,
 		},
 		{
-			name:"false: slice of struct",
+			name: "false: slice of struct",
 			args: args{
 				i: []struct{}{},
 			},
 			want: false,
 		},
 		{
-			name:"false: pointer of slice of int",
+			name: "false: pointer of slice of int",
 			args: args{
 				i: &[]int{},
 			},
@@ -126,21 +126,21 @@ func TestIsPointerOfStruct(t *testing.T) {
 		want bool
 	}{
 		{
-			name:"true: pointer of struct",
+			name: "true: pointer of struct",
 			args: args{
 				i: &struct{}{},
 			},
 			want: true,
 		},
 		{
-			name:"false: struct",
+			name: "false: struct",
 			args: args{
 				i: struct{}{},
 			},
 			want: false,
 		},
 		{
-			name:"false: pointer of int",
+			name: "false: pointer of int",
 			args: args{
 				i: &[]int{1}[0],
 			},
@@ -166,21 +166,21 @@ func TestIsPointerOfSliceOfPointerOfStruct(t *testing.T) {
 		want bool
 	}{
 		{
-			name:"true: pointer of slice of pointer of struct",
+			name: "true: pointer of slice of pointer of struct",
 			args: args{
 				i: &[]*struct{}{},
 			},
 			want: true,
 		},
 		{
-			name:"false: slice of pointer of struct",
+			name: "false: slice of pointer of struct",
 			args: args{
 				i: []*struct{}{},
 			},
 			want: false,
 		},
 		{
-			name:"false: pointer of slice of pointer of int",
+			name: "false: pointer of slice of pointer of int",
 			args: args{
 				i: &[]*int{},
 			},
@@ -204,9 +204,9 @@ func TestNewStructInstance(t *testing.T) {
 		i interface{}
 	}
 	tests := []struct {
-		name    string
-		args    args
-		test    func(t *testing.T, r interface{}, err error)
+		name string
+		args args
+		test func(t *testing.T, r interface{}, err error)
 	}{
 		{
 			name: "success: instance of struct",
@@ -269,4 +269,3 @@ func TestNewStructInstance(t *testing.T) {
 		})
 	}
 }
-

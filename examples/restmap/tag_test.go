@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/future-architect/tagscanner/runtimescan"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
 )
 
 func Test_defaultFieldType_Convert(t *testing.T) {
@@ -283,4 +283,3 @@ func Test_parseTag(t *testing.T) {
 		})
 	}
 }
-

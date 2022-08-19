@@ -9,7 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	"gitlab.com/osaki-lab/tagscanner/examples/restmap"
+	"github.com/future-architect/tagscanner/examples/restmap"
 )
 
 func ExampleDecode() {
@@ -65,4 +65,3 @@ func createRequest() *http.Request {
 
 	return req
 }
-

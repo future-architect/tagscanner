@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"gitlab.com/osaki-lab/tagscanner/runtimescan"
+	"github.com/future-architect/tagscanner/runtimescan"
 )
 
 type cmpStrategy struct {
