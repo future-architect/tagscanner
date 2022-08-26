@@ -117,6 +117,25 @@ func Test_decode(t *testing.T) {
 				assert.Equal(t, "error interface", target.Error.Error())
 			},
 		},
+		{
+			name: "assign values to user defined type",
+			check: func(t *testing.T) {
+				type Int int
+				type String string
+				type Target struct {
+					Int    Int    `map:"int"`
+					String String `map:"string"`
+				}
+				target := Target{}
+				v, err := newParser(&d, []string{"map"}, &target)
+				assert.NoError(t, err)
+				assert.NotNil(t, v)
+				err = decode(&target, v, &d)
+				assert.NoError(t, err)
+				assert.Equal(t, Int(12345), target.Int)
+				assert.Equal(t, String("string"), target.String)
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

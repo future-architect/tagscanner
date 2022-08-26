@@ -1,9 +1,10 @@
 package runtimescan
 
 import (
-	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -1088,6 +1089,17 @@ func Test_FuzzyAssign_struct(t *testing.T) {
 				assert.NoError(t, err)
 				assert.NotNil(t, v)
 				assert.Equal(t, "test", v.Error())
+			},
+		},
+		{
+			name: "user defined type",
+			check: func(t *testing.T) {
+				type Int int
+				var v Int
+				src := 12345
+				err := FuzzyAssign(&v, src)
+				assert.NoError(t, err)
+				assert.Equal(t, Int(src), v)
 			},
 		},
 	}
