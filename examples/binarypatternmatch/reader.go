@@ -24,11 +24,11 @@ type binaryDecoder struct {
 	buffer       []byte
 }
 
-func (b binaryDecoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (b binaryDecoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return parseBinaryTag(name, tagKey, tagStr, pathStr, elemType)
 }
 
-func (b *binaryDecoder) ExtractValue(tag interface{}) (value interface{}, err error) {
+func (b *binaryDecoder) ExtractValue(tag any) (value any, err error) {
 	t := tag.(*binaryTag)
 	switch t.Type {
 	case Bits:
@@ -152,7 +152,7 @@ func (b *binaryDecoder) readBytes(l int) error {
 	return nil
 }
 
-func Decode(dest interface{}, reader io.Reader) error {
+func Decode(dest any, reader io.Reader) error {
 	decoder := &binaryDecoder{
 		reader:  reader,
 		lengths: make(map[string]uint64),

@@ -9,28 +9,28 @@ import (
 )
 
 type encoder struct {
-	dest map[string]interface{}
+	dest map[string]any
 }
 
-func (m encoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m encoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return runtimescan.BasicParseTag(name, tagKey, tagStr, pathStr, elemType)
 }
 
-func (m *encoder) VisitField(tag, value interface{}) (err error) {
+func (m *encoder) VisitField(tag, value any) (err error) {
 	t := tag.(*runtimescan.BasicTag)
 	m.dest[t.Tag] = value
 	return nil
 }
 
-func (m encoder) EnterChild(tag interface{}) (err error) {
+func (m encoder) EnterChild(tag any) (err error) {
 	return nil
 }
 
-func (m encoder) LeaveChild(tag interface{}) (err error) {
+func (m encoder) LeaveChild(tag any) (err error) {
 	return nil
 }
 
-func Encode(dest map[string]interface{}, src interface{}) error {
+func Encode(dest map[string]any, src any) error {
 	enc := &encoder{
 		dest: dest,
 	}
@@ -38,7 +38,7 @@ func Encode(dest map[string]interface{}, src interface{}) error {
 }
 
 func Example_struct2map() {
-	destMap := map[string]interface{}{}
+	destMap := map[string]any{}
 	sampleStruct := struct {
 		Int         int      `map:"int"`
 		Pointer     *float64 `map:"float"`

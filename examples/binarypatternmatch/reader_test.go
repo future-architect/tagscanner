@@ -9,14 +9,14 @@ import (
 
 func TestDecode(t *testing.T) {
 	type args struct {
-		dest   interface{}
+		dest   any
 		reader io.Reader
 	}
 	tests := []struct {
 		name    string
 		args    args
 		wantErr bool
-		want    interface{}
+		want    any
 	}{
 		{
 			name: "single bit (1)",

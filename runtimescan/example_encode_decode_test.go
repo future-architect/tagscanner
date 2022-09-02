@@ -13,24 +13,24 @@ type cpyStrategy struct {
 }
 
 type cpy struct {
-	values map[string]interface{}
+	values map[string]any
 }
 
-func (c *cpy) VisitField(tag, value interface{}) (err error) {
+func (c *cpy) VisitField(tag, value any) (err error) {
 	t := tag.(*cpyStrategy)
 	c.values[t.Path] = value
 	return nil
 }
 
-func (c cpy) EnterChild(tag interface{}) (err error) {
+func (c cpy) EnterChild(tag any) (err error) {
 	return nil
 }
 
-func (c cpy) LeaveChild(tag interface{}) (err error) {
+func (c cpy) LeaveChild(tag any) (err error) {
 	return nil
 }
 
-func (c cpy) ExtractValue(tag interface{}) (value interface{}, err error) {
+func (c cpy) ExtractValue(tag any) (value any, err error) {
 	t := tag.(*cpyStrategy)
 	if v, ok := c.values[t.Path]; ok {
 		return v, nil
@@ -38,7 +38,7 @@ func (c cpy) ExtractValue(tag interface{}) (value interface{}, err error) {
 	return nil, runtimescan.Skip
 }
 
-func (c cpy) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (c cpy) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	if tagStr == "skip" {
 		return nil, runtimescan.Skip
 	}
@@ -48,9 +48,9 @@ func (c cpy) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Typ
 
 }
 
-func Copy(dest, src interface{}) error {
+func Copy(dest, src any) error {
 	c := &cpy{
-		values: make(map[string]interface{}),
+		values: make(map[string]any),
 	}
 	err := runtimescan.Encode(src, []string{"copy"}, c)
 	if err != nil {

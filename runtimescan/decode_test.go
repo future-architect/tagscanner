@@ -9,14 +9,14 @@ import (
 )
 
 type mapDecoder struct {
-	values map[string]interface{}
+	values map[string]any
 }
 
-func (d mapDecoder) ParseTag(name, tagKey, tagStr, pathStr string, eType reflect.Type) (interface{}, error) {
+func (d mapDecoder) ParseTag(name, tagKey, tagStr, pathStr string, eType reflect.Type) (any, error) {
 	return tagStr, nil
 }
 
-func (d mapDecoder) ExtractValue(tag interface{}) (interface{}, error) {
+func (d mapDecoder) ExtractValue(tag any) (any, error) {
 	tagStr := tag.(string)
 	v, ok := d.values[tagStr]
 	if ok {
@@ -31,7 +31,7 @@ type SampleStruct struct {
 
 func Test_decode(t *testing.T) {
 	d := mapDecoder{
-		values: map[string]interface{}{
+		values: map[string]any{
 			"int":    12345,
 			"uint":   uint(12345),
 			"string": "string",

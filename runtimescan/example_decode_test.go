@@ -11,14 +11,14 @@ import (
 // User should implement runtimescan.Decoder interface
 // This instance is created in user code before runtimescan.Decode() function call
 type decoder struct {
-	src map[string]interface{}
+	src map[string]any
 }
 
-func (m decoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m decoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return runtimescan.BasicParseTag(name, tagKey, tagStr, pathStr, elemType)
 }
 
-func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
+func (m *decoder) ExtractValue(tag any) (value any, err error) {
 	t := tag.(*runtimescan.BasicTag)
 	v, ok := m.src[t.Tag]
 	if !ok {
@@ -27,7 +27,7 @@ func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
 	return v, nil
 }
 
-func Decode(dest interface{}, src map[string]interface{}) error {
+func Decode(dest any, src map[string]any) error {
 	dec := &decoder{
 		src: src,
 	}
@@ -35,7 +35,7 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 }
 
 func Example_map2struct() {
-	sampleMap := map[string]interface{}{
+	sampleMap := map[string]any{
 		"int":     1,
 		"float":   1.1,
 		"string":  "hello world",

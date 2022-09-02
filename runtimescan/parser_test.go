@@ -11,7 +11,7 @@ import (
 type dummyVisitor struct {
 }
 
-func (dv dummyVisitor) ParseTag(name, tagKey, tag, pathStr string, eType reflect.Type) (interface{}, error) {
+func (dv dummyVisitor) ParseTag(name, tagKey, tag, pathStr string, eType reflect.Type) (any, error) {
 	if tag == "" {
 		return nil, Skip
 	}
@@ -21,7 +21,7 @@ func (dv dummyVisitor) ParseTag(name, tagKey, tag, pathStr string, eType reflect
 func Test_visitor_parse(t *testing.T) {
 	type args struct {
 		vi Parser
-		e  func() interface{}
+		e  func() any
 	}
 	tests := []struct {
 		name             string
@@ -35,7 +35,7 @@ func Test_visitor_parse(t *testing.T) {
 			name: "single tag",
 			args: args{
 				vi: &dummyVisitor{},
-				e: func() interface{} {
+				e: func() any {
 					type S struct {
 						I int `rest:"i"`
 					}
@@ -55,7 +55,7 @@ func Test_visitor_parse(t *testing.T) {
 			name: "single tags",
 			args: args{
 				vi: &dummyVisitor{},
-				e: func() interface{} {
+				e: func() any {
 					type S struct {
 						I int `rest:"i"`
 						S int `rest:"s"`
@@ -78,7 +78,7 @@ func Test_visitor_parse(t *testing.T) {
 			name: "embed (1)",
 			args: args{
 				vi: &dummyVisitor{},
-				e: func() interface{} {
+				e: func() any {
 					type E struct {
 						I int `rest:"i"`
 					}
@@ -108,7 +108,7 @@ func Test_visitor_parse(t *testing.T) {
 			name: "embed (2)",
 			args: args{
 				vi: &dummyVisitor{},
-				e: func() interface{} {
+				e: func() any {
 					type E struct {
 						I int `rest:"i"`
 					}
@@ -138,7 +138,7 @@ func Test_visitor_parse(t *testing.T) {
 			name: "struct",
 			args: args{
 				vi: &dummyVisitor{},
-				e: func() interface{} {
+				e: func() any {
 					type C struct {
 						I int `rest:"i"`
 					}
@@ -196,7 +196,7 @@ type TestStruct struct {
 type dummyStructVisitor struct {
 }
 
-func (dv dummyStructVisitor) ParseTag(name, tag, pathStr string) (interface{}, error) {
+func (dv dummyStructVisitor) ParseTag(name, tag, pathStr string) (any, error) {
 	if tag == "" {
 		return nil, Skip
 	}

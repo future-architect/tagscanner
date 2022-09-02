@@ -45,24 +45,24 @@ Then implement ``VisitField()`` that receives field value and stores to destinat
 
 ```go
 type encoder struct {
-	dest map[string]interface{}
+	dest map[string]any
 }
 
-func (m encoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m encoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return runtimescan.BasicParseTag(name, tagStr, pathStr, elemType)
 }
 
-func (m *encoder) VisitField(tag, value interface{}) (err error) {
+func (m *encoder) VisitField(tag, value any) (err error) {
 	t := tag.(*runtimescan.BasicTag)
 	m.dest[t.Tag] = value
 	return nil
 }
 
-func (m encoder) EnterChild(tag interface{}) (err error) {
+func (m encoder) EnterChild(tag any) (err error) {
 	return nil
 }
 
-func (m encoder) LeaveChild(tag interface{}) (err error) {
+func (m encoder) LeaveChild(tag any) (err error) {
 	return nil
 }
 ```
@@ -70,7 +70,7 @@ func (m encoder) LeaveChild(tag interface{}) (err error) {
 At last, create an entry point function.
 
 ```go
-func Encode(dest map[string]interface{}, src interface{}) error {
+func Encode(dest map[string]any, src any) error {
 	enc := &encoder{
 		dest: dest,
 	}
@@ -86,14 +86,14 @@ Implement ``ExtractValue()`` method. The result value of this method will be pas
 
 ```go
 type decoder struct {
-	src map[string]interface{}
+	src map[string]any
 }
 
-func (m decoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m decoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return runtimescan.BasicParseTag(name, tagStr, pathStr, elemType)
 }
 
-func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
+func (m *decoder) ExtractValue(tag any) (value any, err error) {
 	t := tag.(*runtimescan.BasicTag)
 	v, ok := m.src[t.Tag]
 	if !ok {
@@ -106,7 +106,7 @@ func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
 At last, create an entry point function.
 
 ```go
-func Decode(dest interface{}, src map[string]interface{}) error {
+func Decode(dest any, src map[string]any) error {
 	dec := &decoder{
 		src: src,
 	}
@@ -132,12 +132,12 @@ This package contains several utility functions.
 
   It generates primitive from string like "1", "true". It is for creating primitive from string in tag.
 
-* ``runtimescan.IsPointerOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i interface{})``
+* ``runtimescan.IsPointerOfStruct(i any)``, ``runtimescan.IsPointerOfSliceOfStruct(i any)``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i any)``
 
-  Check the pointer passed as ``interface{}`` is ``*struct`` or ``*[]struct`` or ``*[]*struct``.
+  Check the pointer passed as ``any`` is ``*struct`` or ``*[]struct`` or ``*[]*struct``.
   This is useful to check type definition in ``Decode`` function.
 
-* ``runtimescan.NewStructInstance(i interface{})``
+* ``runtimescan.NewStructInstance(i any)``
 
   Generate a new instance based on passed type. Whether the input is ``*struct`` or ``*[]struct`` or ``*[]*struct``, it returns ``*struct``.
 

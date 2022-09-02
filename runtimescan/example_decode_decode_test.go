@@ -15,10 +15,10 @@ type cmpStrategy struct {
 }
 
 type compare struct {
-	values map[string]interface{}
+	values map[string]any
 }
 
-func (c compare) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (c compare) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	if tagStr == "skip" {
 		return nil, runtimescan.Skip
 	}
@@ -31,7 +31,7 @@ func (c compare) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect
 	}, nil
 }
 
-func (c *compare) VisitField(tag, value interface{}) (err error) {
+func (c *compare) VisitField(tag, value any) (err error) {
 	t := tag.(*cmpStrategy)
 	if t.IgnoreCase {
 		c.values[t.Path] = strings.ToLower(value.(string))
@@ -41,24 +41,24 @@ func (c *compare) VisitField(tag, value interface{}) (err error) {
 	return nil
 }
 
-func (c compare) EnterChild(tag interface{}) (err error) {
+func (c compare) EnterChild(tag any) (err error) {
 	return nil
 }
 
-func (c compare) LeaveChild(tag interface{}) (err error) {
+func (c compare) LeaveChild(tag any) (err error) {
 	return nil
 }
 
-func Compare(s1, s2 interface{}) (bool, []string, error) {
+func Compare(s1, s2 any) (bool, []string, error) {
 	c1 := compare{
-		values: make(map[string]interface{}),
+		values: make(map[string]any),
 	}
 	err := runtimescan.Encode(s1, []string{"cmp"}, &c1)
 	if err != nil {
 		return false, nil, err
 	}
 	c2 := compare{
-		values: make(map[string]interface{}),
+		values: make(map[string]any),
 	}
 	err = runtimescan.Encode(s2, []string{"cmp"}, &c2)
 	if err != nil {

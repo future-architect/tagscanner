@@ -21,7 +21,7 @@ func Test_requestDecoder_ExtractValue(t *testing.T) {
 		name       string
 		newRequest func() *http.Request
 		args       args
-		wantValue  interface{}
+		wantValue  any
 		wantErr    bool
 	}{
 		{

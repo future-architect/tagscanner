@@ -5,7 +5,7 @@ import (
 )
 
 // Decode convert from some source into struct by using tag information.
-func Decode(dest interface{}, tags []string, decoder Decoder) error {
+func Decode(dest any, tags []string, decoder Decoder) error {
 	v, err := getParser(dest, tags, decoder)
 	if err != nil {
 		return err
@@ -13,7 +13,7 @@ func Decode(dest interface{}, tags []string, decoder Decoder) error {
 	return decode(dest, v, decoder)
 }
 
-func decode(dest interface{}, v *parser, decoder Decoder) error {
+func decode(dest any, v *parser, decoder Decoder) error {
 	current := reflect.ValueOf(dest).Elem()
 	stack := []reflect.Value{current}
 	var errors []error
@@ -30,7 +30,16 @@ func decode(dest interface{}, v *parser, decoder Decoder) error {
 				errors = append(errors, err)
 				continue
 			}
-			err = fuzzyAssign(fv, field.eType, field.eKind, field.isPtr, value)
+			err = FuzzyAssign(fv, value)
+			/*if field.isPtr {
+				log.Println(fv.Type(), field.eType)
+				err = fuzzyAssign(fv.Elem(), field.eType, value)
+			} else {
+				err = fuzzyAssign(fv, field.eType, value)
+			}*/
+			if err != nil {
+				errors = append(errors, err)
+			}
 		case visitChildOp:
 			current := current.Field(index)
 			stack = append(stack, current)

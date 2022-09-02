@@ -16,7 +16,7 @@ const (
 )
 
 type field struct {
-	tag   interface{}
+	tag   any
 	eKind reflect.Kind
 	eType reflect.Type
 	isPtr bool
@@ -30,7 +30,7 @@ type parser struct {
 	panicWhenParsing bool
 }
 
-func newParser(vi Parser, tags []string, s interface{}) (*parser, error) {
+func newParser(vi Parser, tags []string, s any) (*parser, error) {
 	err := shouldPointerOfStruct(s)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func newParser(vi Parser, tags []string, s interface{}) (*parser, error) {
 	return nil, &Errors{Errors: visitor.errors}
 }
 
-func shouldPointerOfStruct(s interface{}) error {
+func shouldPointerOfStruct(s any) error {
 	v := reflect.ValueOf(s)
 	if v.Type().Kind() != reflect.Ptr {
 		return fmt.Errorf("sample should be pointer of struct: %w", ErrParseTag)
@@ -165,7 +165,7 @@ type parserCacheKey struct {
 
 var parsers = make(map[parserCacheKey]*parser)
 
-func getParser(dest interface{}, tags []string, parser Parser) (*parser, error) {
+func getParser(dest any, tags []string, parser Parser) (*parser, error) {
 	err := shouldPointerOfStruct(dest)
 	if err != nil {
 		return nil, err

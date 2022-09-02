@@ -13,7 +13,7 @@ func TestStr2PrimitiveValue(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    interface{}
+		want    any
 		wantErr bool
 	}{
 		{
@@ -78,7 +78,7 @@ func TestStr2PrimitiveValue(t *testing.T) {
 
 func TestIsPointerOfSliceOfStruct(t *testing.T) {
 	type args struct {
-		i interface{}
+		i any
 	}
 	tests := []struct {
 		name string
@@ -118,7 +118,7 @@ func TestIsPointerOfSliceOfStruct(t *testing.T) {
 
 func TestIsPointerOfStruct(t *testing.T) {
 	type args struct {
-		i interface{}
+		i any
 	}
 	tests := []struct {
 		name string
@@ -158,7 +158,7 @@ func TestIsPointerOfStruct(t *testing.T) {
 
 func TestIsPointerOfSliceOfPointerOfStruct(t *testing.T) {
 	type args struct {
-		i interface{}
+		i any
 	}
 	tests := []struct {
 		name string
@@ -201,19 +201,19 @@ func TestNewStructInstance(t *testing.T) {
 		Name string
 	}
 	type args struct {
-		i interface{}
+		i any
 	}
 	tests := []struct {
 		name string
 		args args
-		test func(t *testing.T, r interface{}, err error)
+		test func(t *testing.T, r any, err error)
 	}{
 		{
 			name: "success: instance of struct",
 			args: args{
 				i: &Struct{},
 			},
-			test: func(t *testing.T, r interface{}, err error) {
+			test: func(t *testing.T, r any, err error) {
 				if _, ok := r.(*Struct); !ok {
 					t.Errorf("result should be valid instance")
 				}
@@ -227,7 +227,7 @@ func TestNewStructInstance(t *testing.T) {
 			args: args{
 				i: &[]Struct{},
 			},
-			test: func(t *testing.T, r interface{}, err error) {
+			test: func(t *testing.T, r any, err error) {
 				if _, ok := r.(*Struct); !ok {
 					t.Errorf("result should be valid instance")
 				}
@@ -241,7 +241,7 @@ func TestNewStructInstance(t *testing.T) {
 			args: args{
 				i: &[]*Struct{},
 			},
-			test: func(t *testing.T, r interface{}, err error) {
+			test: func(t *testing.T, r any, err error) {
 				if _, ok := r.(*Struct); !ok {
 					t.Errorf("result should be valid instance")
 				}
@@ -255,7 +255,7 @@ func TestNewStructInstance(t *testing.T) {
 			args: args{
 				i: &[]int{1},
 			},
-			test: func(t *testing.T, r interface{}, err error) {
+			test: func(t *testing.T, r any, err error) {
 				if err == nil {
 					t.Errorf("error should be nil")
 				}

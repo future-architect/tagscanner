@@ -18,7 +18,7 @@ type Parser interface {
 	// tagStr: Tag string
 	// pathStr: Field name for error message (it contains nested struct names)
 	// elemType: Field type
-	ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error)
+	ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error)
 }
 
 // Decoder is an interface that extracts value from some type and assign to struct instance.
@@ -27,7 +27,7 @@ type Parser interface {
 type Decoder interface {
 	Parser
 	// ExtractValue is called for each field of each struct instance inside Decode().
-	ExtractValue(tag interface{}) (value interface{}, err error)
+	ExtractValue(tag any) (value any, err error)
 }
 
 // Encoder is an interface that receive values from some type and create other files.
@@ -38,9 +38,9 @@ type Decoder interface {
 // EnterChild() and LeaveChild)() are called when traversing struct structure.
 type Encoder interface {
 	Parser
-	VisitField(tag, value interface{}) (err error)
-	EnterChild(tag interface{}) (err error)
-	LeaveChild(tag interface{}) (err error)
+	VisitField(tag, value any) (err error)
+	EnterChild(tag any) (err error)
+	LeaveChild(tag any) (err error)
 }
 
 type Errors struct {

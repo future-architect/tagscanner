@@ -23,7 +23,7 @@ type BasicTag struct {
 //
 // Both Encoder and Decoder should implement ParseTag() method.
 // This is the simplest implementation of these methods.
-func BasicParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func BasicParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	if tagStr == "" {
 		tagStr = strings.ToLower(name)
 	}
@@ -38,7 +38,7 @@ func BasicParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) 
 
 // Str2PrimitiveValue is a helper function that generates primitive from string like "1", "true".
 // It is for creating primitive from string in tag.
-func Str2PrimitiveValue(value string, elemType reflect.Type) (interface{}, error) {
+func Str2PrimitiveValue(value string, elemType reflect.Type) (any, error) {
 	switch elemType.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		v, err := strconv.ParseInt(value, 10, 64)
@@ -71,8 +71,8 @@ func Str2PrimitiveValue(value string, elemType reflect.Type) (interface{}, error
 	}
 }
 
-// IsPointerOfSliceOfStruct is a helper function that checks passed interface{} is the form of *[]struct.
-func IsPointerOfSliceOfStruct(i interface{}) bool {
+// IsPointerOfSliceOfStruct is a helper function that checks passed any is the form of *[]struct.
+func IsPointerOfSliceOfStruct(i any) bool {
 	v := reflect.ValueOf(i)
 	if v.Type().Kind() != reflect.Ptr {
 		return false
@@ -83,8 +83,8 @@ func IsPointerOfSliceOfStruct(i interface{}) bool {
 	return v.Type().Elem().Elem().Kind() == reflect.Struct
 }
 
-// IsPointerOfSliceOfPointerOfStruct is a helper function that checks passed interface{} is the form of *[]*struct.
-func IsPointerOfSliceOfPointerOfStruct(i interface{}) bool {
+// IsPointerOfSliceOfPointerOfStruct is a helper function that checks passed any is the form of *[]*struct.
+func IsPointerOfSliceOfPointerOfStruct(i any) bool {
 	v := reflect.ValueOf(i)
 	if v.Type().Kind() != reflect.Ptr {
 		return false
@@ -98,8 +98,8 @@ func IsPointerOfSliceOfPointerOfStruct(i interface{}) bool {
 	return v.Type().Elem().Elem().Elem().Kind() == reflect.Struct
 }
 
-// IsPointerOfStruct is a helper function that checks passed interface{} is the form of *struct.
-func IsPointerOfStruct(i interface{}) bool {
+// IsPointerOfStruct is a helper function that checks passed any is the form of *struct.
+func IsPointerOfStruct(i any) bool {
 	v := reflect.ValueOf(i)
 	if v.Type().Kind() != reflect.Ptr {
 		return false
@@ -111,7 +111,7 @@ func IsPointerOfStruct(i interface{}) bool {
 //
 // Even if the input has a form of *struct, *[]struct, *[]*struct,
 // it creates new instance and returns in the form of *struct.
-func NewStructInstance(i interface{}) (interface{}, error) {
+func NewStructInstance(i any) (any, error) {
 	if IsPointerOfStruct(i) {
 		v := reflect.New(reflect.TypeOf(i).Elem())
 		return v.Interface(), nil

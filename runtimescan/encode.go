@@ -5,7 +5,7 @@ import (
 )
 
 // Encode convert from some source into struct by using tag information.
-func Encode(src interface{}, tags []string, encoder Encoder) error {
+func Encode(src any, tags []string, encoder Encoder) error {
 	v, err := getParser(src, tags, encoder)
 	if err != nil {
 		return err
@@ -13,7 +13,7 @@ func Encode(src interface{}, tags []string, encoder Encoder) error {
 	return encode(encoder, v, src)
 }
 
-func encode(encoder Encoder, v *parser, src interface{}) error {
+func encode(encoder Encoder, v *parser, src any) error {
 	current := reflect.ValueOf(src).Elem()
 	stack := []reflect.Value{current}
 	var errors []error
@@ -23,7 +23,7 @@ func encode(encoder Encoder, v *parser, src interface{}) error {
 		switch op {
 		case visitFieldOp:
 			fv := current.Field(index)
-			var value interface{}
+			var value any
 			if field.isPtr {
 				if fv.IsNil() {
 					value = nil

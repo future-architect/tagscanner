@@ -8,24 +8,24 @@ import (
 )
 
 type mapEncoder struct {
-	result map[string]interface{}
+	result map[string]any
 }
 
-func (m mapEncoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m mapEncoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return tagStr, nil
 }
 
-func (m *mapEncoder) VisitField(tag, value interface{}) (err error) {
+func (m *mapEncoder) VisitField(tag, value any) (err error) {
 	tagStr := tag.(string)
 	m.result[tagStr] = value
 	return nil
 }
 
-func (m mapEncoder) EnterChild(tag interface{}) (err error) {
+func (m mapEncoder) EnterChild(tag any) (err error) {
 	panic("implement me")
 }
 
-func (m mapEncoder) LeaveChild(tag interface{}) (err error) {
+func (m mapEncoder) LeaveChild(tag any) (err error) {
 	panic("implement me")
 }
 
@@ -38,7 +38,7 @@ func Test_encode(t *testing.T) {
 			name: "simple tags",
 			check: func(t *testing.T) {
 				m := mapEncoder{
-					result: make(map[string]interface{}),
+					result: make(map[string]any),
 				}
 				type Source struct {
 					Int       int     `map:"int"`
@@ -67,7 +67,7 @@ func Test_encode(t *testing.T) {
 			name: "nested struct",
 			check: func(t *testing.T) {
 				m := mapEncoder{
-					result: make(map[string]interface{}),
+					result: make(map[string]any),
 				}
 				type Child struct {
 					Int    int    `map:"int"`
@@ -95,7 +95,7 @@ func Test_encode(t *testing.T) {
 			name: "user defined type",
 			check: func(t *testing.T) {
 				m := mapEncoder{
-					result: make(map[string]interface{}),
+					result: make(map[string]any),
 				}
 				type Int int
 				type String string

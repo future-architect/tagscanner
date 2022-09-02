@@ -43,24 +43,24 @@
 
 ```go
 type encoder struct {
-	dest map[string]interface{}
+	dest map[string]any
 }
 
-func (m encoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m encoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return runtimescan.BasicParseTag(name, tagStr, pathStr, elemType)
 }
 
-func (m *encoder) VisitField(tag, value interface{}) (err error) {
+func (m *encoder) VisitField(tag, value any) (err error) {
 	t := tag.(*runtimescan.BasicTag)
 	m.dest[t.Tag] = value
 	return nil
 }
 
-func (m encoder) EnterChild(tag interface{}) (err error) {
+func (m encoder) EnterChild(tag any) (err error) {
 	return nil
 }
 
-func (m encoder) LeaveChild(tag interface{}) (err error) {
+func (m encoder) LeaveChild(tag any) (err error) {
 	return nil
 }
 ```
@@ -68,7 +68,7 @@ func (m encoder) LeaveChild(tag interface{}) (err error) {
 最後に、ユーザー向けのAPIの関数を作ります。
 
 ```go
-func Encode(dest map[string]interface{}, src interface{}) error {
+func Encode(dest map[string]any, src any) error {
 	enc := &encoder{
 		dest: dest,
 	}
@@ -85,14 +85,14 @@ func Encode(dest map[string]interface{}, src interface{}) error {
 
 ```go
 type decoder struct {
-	src map[string]interface{}
+	src map[string]any
 }
 
-func (m decoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (m decoder) ParseTag(name, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return runtimescan.BasicParseTag(name, tagStr, pathStr, elemType)
 }
 
-func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
+func (m *decoder) ExtractValue(tag any) (value any, err error) {
 	t := tag.(*runtimescan.BasicTag)
 	v, ok := m.src[t.Tag]
 	if !ok {
@@ -105,7 +105,7 @@ func (m *decoder) ExtractValue(tag interface{}) (value interface{}, err error) {
 こちらも、最後にユーザー向けのAPIの関数を定義します。
 
 ```go
-func Decode(dest interface{}, src map[string]interface{}) error {
+func Decode(dest any, src map[string]any) error {
 	dec := &decoder{
 		src: src,
 	}
@@ -131,11 +131,11 @@ func Decode(dest interface{}, src map[string]interface{}) error {
 
   1やtrueなどの文字列表現からプリミティブを作成します。タグ中に文字列で書かれたプリミティブをデフォルト値などで使う場合に利用します。
 
-* ``runtimescan.IsPointerOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfStruct(i interface{})``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i interface{})``
+* ``runtimescan.IsPointerOfStruct(i any)``, ``runtimescan.IsPointerOfSliceOfStruct(i any)``, ``runtimescan.IsPointerOfSliceOfPointerOfStruct(i any)``
 
-  ``interface{}``に渡されたポインタ型が``*struct``か``*[]struct``か``*[]*struct``かをそれぞれ判定します。``Decode()``を実装する時の型チェックに使います。
+  ``any``に渡されたポインタ型が``*struct``か``*[]struct``か``*[]*struct``かをそれぞれ判定します。``Decode()``を実装する時の型チェックに使います。
 
-* ``runtimescan.NewStructInstance(i interface{})``
+* ``runtimescan.NewStructInstance(i any)``
 
   引数で渡されたポインタ型を元に、インスタンスを生成して返します。引数は``*struct``か``*[]struct``か``*[]*struct``のいずれかを受け付け、``*struct``を返します。
 

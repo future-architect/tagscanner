@@ -35,10 +35,10 @@ type requestDecoder struct {
 	parseError error
 	bodyType   bodyType
 	multipart  *multipart.Form
-	json       map[string]interface{}
+	json       map[string]any
 }
 
-func (d requestDecoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag interface{}, err error) {
+func (d requestDecoder) ParseTag(name, tagKey, tagStr, pathStr string, elemType reflect.Type) (tag any, err error) {
 	return ParseRestTag(name, tagStr, pathStr, elemType)
 }
 
@@ -73,7 +73,7 @@ func (d *requestDecoder) initBody() {
 	}
 }
 
-func (d *requestDecoder) ExtractValue(tagInstance interface{}) (value interface{}, err error) {
+func (d *requestDecoder) ExtractValue(tagInstance any) (value any, err error) {
 	t := tagInstance.(*RestTag)
 	switch t.Type {
 	case MethodField:
@@ -163,7 +163,7 @@ var DefaultMaxMemory = 32 << 20 // 32 MB as same as http.Request
 
 var _ runtimescan.Decoder = &requestDecoder{}
 
-func Decode(dest interface{}, r *http.Request) error {
+func Decode(dest any, r *http.Request) error {
 	decoder := &requestDecoder{
 		req:      r,
 		once:     &sync.Once{},
