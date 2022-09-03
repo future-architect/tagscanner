@@ -31,12 +31,6 @@ func decode(dest any, v *parser, decoder Decoder) error {
 				continue
 			}
 			err = FuzzyAssign(fv, value)
-			/*if field.isPtr {
-				log.Println(fv.Type(), field.eType)
-				err = fuzzyAssign(fv.Elem(), field.eType, value)
-			} else {
-				err = fuzzyAssign(fv, field.eType, value)
-			}*/
 			if err != nil {
 				errors = append(errors, err)
 			}

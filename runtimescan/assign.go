@@ -46,7 +46,7 @@ func directAssign(dest, value reflect.Value) bool {
 	vk := value.Kind()
 	if dest.Kind() == reflect.Pointer { // Pointer
 		destType = destType.Elem()
-		if value.CanConvert(destType) && !(destType.Kind() == reflect.String && (vk == reflect.Int) || vk == reflect.Uint) {
+		if value.CanConvert(destType) && !(destType.Kind() == reflect.String && ((vk == reflect.Int) || vk == reflect.Uint)) {
 			if !dest.Elem().CanSet() {
 				dest.Set(reflect.New(dest.Type().Elem()))
 			}
@@ -55,7 +55,7 @@ func directAssign(dest, value reflect.Value) bool {
 		}
 		return false
 	} else { // Struct Field
-		if value.CanConvert(destType) && !(destType.Kind() == reflect.String && (vk == reflect.Int) || vk == reflect.Uint) {
+		if value.CanConvert(destType) && !(destType.Kind() == reflect.String && ((vk == reflect.Int) || vk == reflect.Uint)) {
 			dest.Set(value.Convert(destType))
 			return true
 		}
