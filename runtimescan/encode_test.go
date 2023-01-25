@@ -131,7 +131,7 @@ func Test_encode(t *testing.T) {
 	}
 }
 
-func Test_encode_parallel(t *testing.T) {
+func Test_Encode_parallel(t *testing.T) {
 	parallelNum := 1000
 	tests := []struct {
 		name  string
@@ -223,10 +223,7 @@ func Test_encode_parallel(t *testing.T) {
 							result: make(map[string]any),
 						}
 
-						v, err := newParser(&m, []string{"map"}, &source)
-						assert.NoError(t, err)
-						assert.NotNil(t, v)
-						err = encode(&m, v, &source)
+						err := Encode(&source, []string{"map"}, &m)
 						assert.NoError(t, err)
 						assert.Equal(t, int(123456789*100+index), m.result["int"])
 						assert.Equal(t, string(fmt.Sprintf("test string %v", index)), m.result["string"])
@@ -322,10 +319,7 @@ func Test_encode_parallel(t *testing.T) {
 						m := mapEncoder{
 							result: make(map[string]any),
 						}
-						v, err := newParser(&m, []string{"map"}, &source)
-						assert.NoError(t, err)
-						assert.NotNil(t, v)
-						err = encode(&m, v, &source)
+						err := Encode(&source, []string{"map"}, &m)
 						assert.NoError(t, err)
 						assert.Equal(t, 123456789*100+index, m.result["int"])
 						assert.Equal(t, fmt.Sprintf("test string %v", index), m.result["string"])
@@ -423,10 +417,7 @@ func Test_encode_parallel(t *testing.T) {
 							result: make(map[string]any),
 						}
 
-						v, err := newParser(&m, []string{"map"}, &source)
-						assert.NoError(t, err)
-						assert.NotNil(t, v)
-						err = encode(&m, v, &source)
+						err := Encode(&source, []string{"map"}, &m)
 						assert.NoError(t, err)
 						assert.Equal(t, Int(123456789*100+index), m.result["int"])
 						assert.Equal(t, String(fmt.Sprintf("test string %v", index)), m.result["string"])
