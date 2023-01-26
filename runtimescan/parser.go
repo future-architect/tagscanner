@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	"unicode"
 )
 
@@ -163,25 +164,25 @@ type parserCacheKey struct {
 	Tag    string
 }
 
-var parsers = make(map[parserCacheKey]*parser)
+var parsers = sync.Map{}
 
-func getParser(dest any, tags []string, parser Parser) (*parser, error) {
+func getParser(dest any, tags []string, p Parser) (*parser, error) {
 	err := shouldPointerOfStruct(dest)
 	if err != nil {
 		return nil, err
 	}
 	key := parserCacheKey{
 		Type:   reflect.ValueOf(dest).Type(),
-		Parser: reflect.ValueOf(parser).Elem().Type(),
+		Parser: reflect.ValueOf(p).Elem().Type(),
 		Tag:    strings.Join(tags, ":"),
 	}
-	v, ok := parsers[key]
+	v, ok := parsers.Load(key)
 	if !ok {
-		v, err = newParser(parser, tags, dest)
+		v, err = newParser(p, tags, dest)
 		if err != nil {
 			return nil, err
 		}
-		parsers[key] = v
+		parsers.Store(key, v)
 	}
-	return v, nil
+	return v.(*parser), nil
 }
